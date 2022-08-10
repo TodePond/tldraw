@@ -381,21 +381,25 @@ const InnerTldraw = React.memo(function InnerTldraw({
     if (isDarkMode) {
       const brushBase = isCadSelectMode
         ? selectByContain
-          ? '69, 155, 255'
-          : '105, 209, 73'
-        : '180, 180, 180'
+          ? '70, 128, 255'
+          : '70, 255, 128'
+        : '159, 174, 204'
       return {
         brushFill: `rgba(${brushBase}, ${isCadSelectMode ? 0.08 : 0.05})`,
         brushStroke: `rgba(${brushBase}, ${isCadSelectMode ? 0.5 : 0.25})`,
-        brushDashStroke: `rgba(${brushBase}, .6)`,
-        selected: 'rgba(38, 150, 255, 1.000)',
-        selectFill: 'rgba(38, 150, 255, 0.05)',
-        background: '#212529',
-        foreground: '#49555f',
+        brushDashStrok4680ffe: `rgba(${brushBase}, .6)`,
+        selected: '#4680ff',
+        selectFill: 'rgba(70, 128, 255, 0.05)',
+        background: '#171d28',
+        foreground: '#374362',
       }
     }
 
-    const brushBase = isCadSelectMode ? (selectByContain ? '0, 89, 242' : '51, 163, 23') : '0,0,0'
+    const brushBase = isCadSelectMode
+      ? selectByContain
+        ? '70, 128, 255'
+        : '70, 255, 128'
+      : '0,0,0'
 
     return {
       brushFill: `rgba(${brushBase}, ${isCadSelectMode ? 0.08 : 0.05})`,
