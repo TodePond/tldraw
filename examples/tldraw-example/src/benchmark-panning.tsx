@@ -26,84 +26,7 @@ const getCandidate = (candidateName: string, timer: any): any => {
 }
 
 const CANDIDATE: any = {
-  BASELINE: function (points: number[][], closed = true): string {
-    if (!points.length) {
-      return ''
-    }
-
-    const max = points.length - 1
-
-    return points
-      .reduce(
-        (acc, point, i, arr) => {
-          if (i === max) {
-            if (closed) acc.push('Z')
-          } else acc.push(point, Vec.med(point, arr[i + 1]))
-          return acc
-        },
-        ['M', points[0], 'Q']
-      )
-      .join(' ')
-      .replaceAll(TRIM_NUMBERS, '$1')
-  },
-  EXAMPLE_1: function (strokePoints: number[][], closed = true): string {
-    if (!strokePoints.length) {
-      return ''
-    }
-
-    const max = strokePoints.length - 1
-
-    return strokePoints
-      .reduce(
-        (acc, strokePoint, i, arr) => {
-          if (i === max) {
-            if (closed) {
-              acc.push('Z')
-            }
-          } else
-            acc.push(strokePoint, [
-              lerp(strokePoint[0], arr[i + 1][0], 0.5),
-              lerp(strokePoint[1], arr[i + 1][1], 0.5),
-            ])
-          return acc
-        },
-        ['M', strokePoints[0], 'Q']
-      )
-      .join(' ')
-      .replaceAll(TRIM_NUMBERS, '$1')
-  },
-  EXAMPLE_2: function (points: number[][], closed = true): string {
-    const len = points.length
-
-    if (!len) {
-      return ''
-    }
-
-    let result = 'M'
-    const first = points[0]
-    result += first[0].toFixed(3) + ',' + first[1].toFixed(3) + 'Q'
-
-    for (let i = 0, max = len - 1; i < max; i++) {
-      const a = points[i]
-      const b = points[i + 1]
-      result +=
-        a[0].toFixed(3) +
-        ',' +
-        a[1].toFixed(3) +
-        ' ' +
-        average(a[0], b[0]).toFixed(3) +
-        ',' +
-        average(a[1], b[1]).toFixed(3) +
-        ' '
-    }
-
-    if (closed) {
-      result += 'Z'
-    }
-
-    return result
-  },
-  INTERPOLATE: function getSvgPathFromStroke(points: number[][]): string {
+  SHORT_CACHE_PATH: function getSvgPathFromStroke(points: number[][]): string {
     const len = points.length
 
     if (!len) {
@@ -126,29 +49,7 @@ const CANDIDATE: any = {
 
     return result
   },
-  CHEEKY_FIXED: function getSvgPathFromStroke(points: number[][]): string {
-    const len = points.length
-
-    if (!len) {
-      return ''
-    }
-
-    const first = points[0]
-    let result = `M${toFixed3(first[0])},${toFixed3(first[1])}Q`
-
-    for (let i = 0, max = len - 1; i < max; i++) {
-      const a = points[i]
-      const b = points[i + 1]
-      result += `${toFixed3(a[0])},${toFixed3(a[1])} ${toFixed3(average(a[0], b[0]))},${toFixed3(
-        average(a[1], b[1])
-      )} `
-    }
-
-    result += 'Z'
-
-    return result
-  },
-  NO_FIXED: function getSvgPathFromStroke(points: number[][]): string {
+  SHORT_CACHE_PATH_NO_FIXED: function getSvgPathFromStroke(points: number[][]): string {
     const len = points.length
 
     if (!len) {
@@ -162,39 +63,6 @@ const CANDIDATE: any = {
       const a = points[i]
       const b = points[i + 1]
       result += `${a[0]},${a[1]} ${average(a[0], b[0])},${average(a[1], b[1])} `
-    }
-
-    result += 'Z'
-
-    return result
-  },
-  REDUCE_POINT_READS: function getSvgPathFromStroke(points: number[][]): string {
-    const len = points.length
-
-    if (!len) {
-      return ''
-    }
-
-    const first = points[0]
-    let result = `M${first[0].toFixed(3)},${first[1].toFixed(3)}Q`
-
-    let ax = 0
-    let ay = 0
-    for (let i = 0, max = len - 1; i < max; i++) {
-      if (i === 0) {
-        const a = points[i]
-        ax = a[0]
-        ay = a[1]
-      }
-      const b = points[i + 1]
-      const bx = b[0]
-      const by = b[1]
-      result += `${ax.toFixed(3)},${ay.toFixed(3)} ${average(ax, bx).toFixed(3)},${average(
-        ay,
-        by
-      ).toFixed(3)} `
-      ax = bx
-      ay = by
     }
 
     result += 'Z'
