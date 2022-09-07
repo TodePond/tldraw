@@ -5,7 +5,7 @@ import Vec from '@tldraw/vec'
 import * as React from 'react'
 
 // Change this constant to test different candidates!
-const CURRENT_CANDIDATE = 'NO_FIXED'
+const CURRENT_CANDIDATE = 'REDUCE_POINT_READS'
 
 //============//
 // CANDIDATES //
@@ -162,6 +162,39 @@ const CANDIDATE: any = {
       const a = points[i]
       const b = points[i + 1]
       result += `${a[0]},${a[1]} ${average(a[0], b[0])},${average(a[1], b[1])} `
+    }
+
+    result += 'Z'
+
+    return result
+  },
+  REDUCE_POINT_READS: function getSvgPathFromStroke(points: number[][]): string {
+    const len = points.length
+
+    if (!len) {
+      return ''
+    }
+
+    const first = points[0]
+    let result = `M${first[0].toFixed(3)},${first[1].toFixed(3)}Q`
+
+    let ax = 0
+    let ay = 0
+    for (let i = 0, max = len - 1; i < max; i++) {
+      if (i === 0) {
+        const a = points[i]
+        ax = a[0]
+        ay = a[1]
+      }
+      const b = points[i + 1]
+      const bx = b[0]
+      const by = b[1]
+      result += `${ax.toFixed(3)},${ay.toFixed(3)} ${average(ax, bx).toFixed(3)},${average(
+        ay,
+        by
+      ).toFixed(3)} `
+      ax = bx
+      ay = by
     }
 
     result += 'Z'
