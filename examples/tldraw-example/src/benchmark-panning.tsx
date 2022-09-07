@@ -4,6 +4,118 @@ import { TDFile, Tldraw, TldrawApp } from '@tldraw/tldraw'
 import Vec from '@tldraw/vec'
 import * as React from 'react'
 
+// Change this constant to test different candidates
+const CURRENT_CANDIDATE = 'EXAMPLE_1'
+
+//============//
+// CANDIDATES //
+//============//
+const getCandidate = (candidateName: string, timer: any): any => {
+  const candidateFunc = CANDIDATE[candidateName]
+  return function (points: number[][], closed = true) {
+    const startTime = performance.now()
+
+    const result = candidateFunc(points, closed)
+
+    const endTime = performance.now()
+    const totalTime = endTime - startTime
+    timer.sumTime += totalTime
+
+    return result
+  }
+}
+
+const CANDIDATE: any = {
+  BASELINE: function (points: number[][], closed = true): string {
+    if (!points.length) {
+      return ''
+    }
+
+    const max = points.length - 1
+
+    return points
+      .reduce(
+        (acc, point, i, arr) => {
+          if (i === max) {
+            if (closed) acc.push('Z')
+          } else acc.push(point, Vec.med(point, arr[i + 1]))
+          return acc
+        },
+        ['M', points[0], 'Q']
+      )
+      .join(' ')
+      .replaceAll(Utils.TRIM_NUMBERS, '$1')
+  },
+  EXAMPLE_1: function (strokePoints: number[][], closed = true): string {
+    if (!strokePoints.length) {
+      return ''
+    }
+
+    const max = strokePoints.length - 1
+
+    return strokePoints
+      .reduce(
+        (acc, strokePoint, i, arr) => {
+          if (i === max) {
+            if (closed) {
+              acc.push('Z')
+            }
+          } else
+            acc.push(strokePoint, [
+              lerp(strokePoint[0], arr[i + 1][0], 0.5),
+              lerp(strokePoint[1], arr[i + 1][1], 0.5),
+            ])
+          return acc
+        },
+        ['M', strokePoints[0], 'Q']
+      )
+      .join(' ')
+      .replaceAll(Utils.TRIM_NUMBERS, '$1')
+  },
+  EXAMPLE_2: function (points: number[][], closed = true): string {
+    const len = points.length
+
+    if (!len) {
+      return ''
+    }
+
+    let result = 'M'
+    const first = points[0]
+    result += first[0].toFixed(3) + ',' + first[1].toFixed(3) + 'Q'
+
+    for (let i = 0, max = len - 1; i < max; i++) {
+      const a = points[i]
+      const b = points[i + 1]
+      result +=
+        a[0].toFixed(3) +
+        ',' +
+        a[1].toFixed(3) +
+        ' ' +
+        average(a[0], b[0]).toFixed(3) +
+        ',' +
+        average(a[1], b[1]).toFixed(3) +
+        ' '
+    }
+
+    if (closed) {
+      result += 'Z'
+    }
+
+    return result
+  },
+}
+
+//=========//
+// HELPERS //
+//=========//
+function lerp(a: number, b: number, t: number) {
+  return a + (b - a) * t
+}
+
+function average(a: number, b: number) {
+  return (a + b) / 2
+}
+
 export default function BenchmarkPanning() {
   //======//
   // LOAD //
@@ -64,33 +176,7 @@ export default function BenchmarkPanning() {
     console.log('STARTING BENCHMARK')
 
     const timer = { sumTime: 0 }
-    Utils.getSvgPathFromStroke = function (points: number[][], closed = true): string {
-      const startTime = performance.now()
-      if (!points.length) {
-        return ''
-      }
-
-      const max = points.length - 1
-
-      const result = points
-        .reduce(
-          (acc, point, i, arr) => {
-            if (i === max) {
-              if (closed) acc.push('Z')
-            } else acc.push(point, Vec.med(point, arr[i + 1]))
-            return acc
-          },
-          ['M', points[0], 'Q']
-        )
-        .join(' ')
-        .replaceAll(this.TRIM_NUMBERS, '$1')
-
-      const endTime = performance.now()
-      const totalTime = endTime - startTime
-      timer.sumTime += totalTime
-
-      return result
-    }
+    Utils.getSvgPathFromStroke = getCandidate(CURRENT_CANDIDATE, timer)
 
     app.resetCamera()
     app.zoomTo(2)
