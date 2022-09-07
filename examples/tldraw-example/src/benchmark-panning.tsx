@@ -4,7 +4,7 @@ import { TDFile, Tldraw, TldrawApp } from '@tldraw/tldraw'
 import Vec from '@tldraw/vec'
 import * as React from 'react'
 
-// Change this constant to test different candidates
+// Change this constant to test different candidates!
 const CURRENT_CANDIDATE = 'NO_FIXED'
 
 //============//
