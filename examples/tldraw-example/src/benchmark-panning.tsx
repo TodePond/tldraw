@@ -5,7 +5,7 @@ import Vec from '@tldraw/vec'
 import * as React from 'react'
 
 // Change this constant to test different candidates
-const CURRENT_CANDIDATE = 'EXAMPLE_1'
+const CURRENT_CANDIDATE = 'CHEEKY_FIXED'
 
 //============//
 // CANDIDATES //
@@ -44,7 +44,7 @@ const CANDIDATE: any = {
         ['M', points[0], 'Q']
       )
       .join(' ')
-      .replaceAll(Utils.TRIM_NUMBERS, '$1')
+      .replaceAll(TRIM_NUMBERS, '$1')
   },
   EXAMPLE_1: function (strokePoints: number[][], closed = true): string {
     if (!strokePoints.length) {
@@ -70,7 +70,7 @@ const CANDIDATE: any = {
         ['M', strokePoints[0], 'Q']
       )
       .join(' ')
-      .replaceAll(Utils.TRIM_NUMBERS, '$1')
+      .replaceAll(TRIM_NUMBERS, '$1')
   },
   EXAMPLE_2: function (points: number[][], closed = true): string {
     const len = points.length
@@ -103,11 +103,62 @@ const CANDIDATE: any = {
 
     return result
   },
+  INTERPOLATE: function getSvgPathFromStroke(points: number[][]): string {
+    const len = points.length
+
+    if (!len) {
+      return ''
+    }
+
+    const first = points[0]
+    let result = `M${first[0].toFixed(3)},${first[1].toFixed(3)}Q`
+
+    for (let i = 0, max = len - 1; i < max; i++) {
+      const a = points[i]
+      const b = points[i + 1]
+      result += `${a[0].toFixed(3)},${a[1].toFixed(3)} ${average(a[0], b[0]).toFixed(3)},${average(
+        a[1],
+        b[1]
+      ).toFixed(3)} `
+    }
+
+    result += 'Z'
+
+    return result
+  },
+  CHEEKY_FIXED: function getSvgPathFromStroke(points: number[][]): string {
+    const len = points.length
+
+    if (!len) {
+      return ''
+    }
+
+    const first = points[0]
+    let result = `M${toFixed3(first[0])},${toFixed3(first[1])}Q`
+
+    for (let i = 0, max = len - 1; i < max; i++) {
+      const a = points[i]
+      const b = points[i + 1]
+      result += `${toFixed3(a[0])},${toFixed3(a[1])} ${toFixed3(average(a[0], b[0]))},${toFixed3(
+        average(a[1], b[1])
+      )} `
+    }
+
+    result += 'Z'
+
+    return result
+  },
 }
 
 //=========//
 // HELPERS //
 //=========//
+const TRIM_NUMBERS = /(\s?[A-Z]?,?-?[0-9]*\.[0-9]{0,2})(([0-9]|e|-)*)/g
+
+const toFixed3 = (n: number): number => {
+  return Math.floor(1000 * n) / 1000
+}
+
 function lerp(a: number, b: number, t: number) {
   return a + (b - a) * t
 }
@@ -173,6 +224,7 @@ export default function BenchmarkPanning() {
 
   const startBenchmark = React.useCallback((app: TldrawApp) => {
     console.log('==================')
+    console.log(`CANDIDATE: ${CURRENT_CANDIDATE}`)
     console.log('STARTING BENCHMARK')
 
     const timer = { sumTime: 0 }
