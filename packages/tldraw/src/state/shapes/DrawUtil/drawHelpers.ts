@@ -36,10 +36,16 @@ export function getFreehandOptions(shape: DrawShape) {
 
 export function getFillPath(shape: DrawShape) {
   if (shape.points.length < 2) return ''
+  if (shape.fillPathCache !== undefined || shape.fillPathCache !== '') {
+    return shape.fillPathCache
+  }
 
-  return Utils.getSvgPathFromStroke(
+  const fillPath = Utils.getSvgPathFromStroke(
     getStrokePoints(shape.points, getFreehandOptions(shape)).map((pt) => pt.point)
   )
+
+  shape.fillPathCache = fillPath
+  return fillPath
 }
 
 export function getDrawStrokePoints(shape: DrawShape, options: StrokeOptions) {

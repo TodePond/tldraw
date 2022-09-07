@@ -310,6 +310,7 @@ export interface TDBaseShape extends TLShape {
 export interface DrawShape extends TDBaseShape {
   type: TDShapeType.Draw
   points: number[][]
+  fillPathCache: string
   isComplete: boolean
 }
 

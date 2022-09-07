@@ -5,7 +5,7 @@ import Vec from '@tldraw/vec'
 import * as React from 'react'
 
 // Change this constant to test different candidates!
-const CURRENT_CANDIDATE = 'REDUCE_POINT_READS'
+const CURRENT_CANDIDATE = 'CACHE_FILL_PATH'
 
 //============//
 // CANDIDATES //
@@ -26,7 +26,7 @@ const getCandidate = (candidateName: string, timer: any): any => {
 }
 
 const CANDIDATE: any = {
-  SHORT_CACHE_PATH: function getSvgPathFromStroke(points: number[][]): string {
+  CACHE_FILL_PATH: function getSvgPathFromStroke(points: number[][]): string {
     const len = points.length
 
     if (!len) {
@@ -49,7 +49,7 @@ const CANDIDATE: any = {
 
     return result
   },
-  SHORT_CACHE_PATH_NO_FIXED: function getSvgPathFromStroke(points: number[][]): string {
+  CACHE_FILL_PATH_NO_FIXED: function getSvgPathFromStroke(points: number[][]): string {
     const len = points.length
 
     if (!len) {
@@ -161,7 +161,7 @@ export default function BenchmarkPanning() {
 
   return (
     <div className="tldraw">
-      <Tldraw readOnly onMount={handleMount} onPersist={handlePersist} document={file?.document} />
+      <Tldraw onMount={handleMount} onPersist={handlePersist} document={file?.document} />
     </div>
   )
 }

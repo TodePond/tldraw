@@ -46,6 +46,7 @@ export class DrawUtil extends TDShapeUtil<T, E> {
         style: defaultStyle,
         points: [],
         isComplete: false,
+        fillPathCache: '',
       },
       props
     )
