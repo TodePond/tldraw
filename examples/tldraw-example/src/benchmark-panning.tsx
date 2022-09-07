@@ -1,36 +1,103 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TDFile, TDShapeType, Tldraw, TldrawApp, useFileSystem } from '@tldraw/tldraw'
+import { Utils } from '@tldraw/core'
+import { TDFile, Tldraw, TldrawApp } from '@tldraw/tldraw'
+import Vec from '@tldraw/vec'
 import * as React from 'react'
 
-declare const window: Window & { app: TldrawApp }
-
-const runBenchmark = (app: TldrawApp) => {
-  if (app === undefined) return
-  console.log('TESTS SHOULD HAPPEN HERE')
-}
-
 export default function BenchmarkPanning() {
-  const rTldrawApp = React.useRef<TldrawApp>()
-
-  const handleMount = React.useCallback((app: TldrawApp) => {
-    window.app = app
-    rTldrawApp.current = app
-  }, [])
-
+  //======//
+  // LOAD //
+  //======//
   const [file, setFile] = React.useState<TDFile>()
+  const [app, setApp] = React.useState<TldrawApp>()
 
-  const handlePersist = React.useCallback(() => {
-    // noop
-  }, [])
+  async function loadFile(): Promise<void> {
+    const file = await fetch('benchmark-panning.tldr').then((response) => response.json())
+    setFile(file)
+  }
+
+  async function setup(app: TldrawApp): Promise<void> {
+    await loadFile()
+    setTimeout(() => startBenchmark(app), 1000)
+  }
 
   React.useEffect(() => {
-    async function loadFile(): Promise<void> {
-      const file = await fetch('benchmark-panning.tldr').then((response) => response.json())
-      setFile(file)
-      runBenchmark(window.app)
+    if (app === undefined) return
+    setup(app)
+  }, [app])
+
+  const handleMount = React.useCallback((app: TldrawApp) => {
+    setApp(app)
+  }, [])
+
+  const handlePersist = React.useCallback(() => {
+    //do nothing
+  }, [])
+
+  //======//
+  // TEST //
+  //======//
+  const TEST_COUNT = 100
+  const PAN_DISTANCE = 10
+
+  function runTest(app: TldrawApp, { panDirection = 1 }: any) {
+    app.pan([PAN_DISTANCE * panDirection, PAN_DISTANCE * panDirection])
+  }
+
+  function runTests(app: TldrawApp, timer: any, { count = TEST_COUNT, panDirection = 1 }: any) {
+    if (count <= 0) {
+      console.log('FINISHED BENCHMARK')
+      const result = `${timer.sumTime.toFixed(2)}ms`
+      console.log(result)
+      alert(`Total time spent in getSvgPathFromStroke:\n\n${result}`)
+      return
     }
 
-    loadFile()
+    runTest(app, { panDirection })
+
+    if (count % 20 === 0) panDirection *= -1
+    requestAnimationFrame(() => runTests(app, timer, { count: count - 1, panDirection }))
+  }
+
+  const startBenchmark = React.useCallback((app: TldrawApp) => {
+    console.log('==================')
+    console.log('STARTING BENCHMARK')
+
+    const timer = { sumTime: 0 }
+    Utils.getSvgPathFromStroke = function (points: number[][], closed = true): string {
+      const startTime = performance.now()
+      if (!points.length) {
+        return ''
+      }
+
+      const max = points.length - 1
+
+      const result = points
+        .reduce(
+          (acc, point, i, arr) => {
+            if (i === max) {
+              if (closed) acc.push('Z')
+            } else acc.push(point, Vec.med(point, arr[i + 1]))
+            return acc
+          },
+          ['M', points[0], 'Q']
+        )
+        .join(' ')
+        .replaceAll(this.TRIM_NUMBERS, '$1')
+
+      const endTime = performance.now()
+      const totalTime = endTime - startTime
+      timer.sumTime += totalTime
+
+      return result
+    }
+
+    app.resetCamera()
+    app.zoomTo(2)
+    app.pan([500, 500])
+
+    console.log('RUNNING BENCHMARK...')
+    requestAnimationFrame(() => runTests(app, timer, { count: TEST_COUNT }))
   }, [])
 
   return (
