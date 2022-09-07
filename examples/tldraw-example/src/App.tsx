@@ -5,6 +5,7 @@ import IFrame from '~iframe'
 import Api from './api'
 import ApiControl from './api-control'
 import Basic from './basic'
+import BenchmarkPanning from './benchmark-panning'
 import ChangingId from './changing-id'
 import DarkMode from './dark-mode'
 import Develop from './develop'
@@ -44,6 +45,7 @@ const pages: ({ path: string; component: any; title: string } | '---')[] = [
   { path: '/scroll', component: Scroll, title: 'In a scrolling container' },
   { path: '/multiplayer', component: Multiplayer, title: 'Multiplayer' },
   { path: '/iframe', component: IFrame, title: 'IFrame' },
+  { path: '/benchmark-panning', component: BenchmarkPanning, title: 'Benchmark: Panning' },
 ]
 
 export default function App() {
