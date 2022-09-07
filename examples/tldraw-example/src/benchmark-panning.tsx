@@ -1,46 +1,41 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TDShapeType, Tldraw, TldrawApp, useFileSystem } from '@tldraw/tldraw'
+import { TDFile, TDShapeType, Tldraw, TldrawApp, useFileSystem } from '@tldraw/tldraw'
 import * as React from 'react'
 
 declare const window: Window & { app: TldrawApp }
 
 const runBenchmark = (app: TldrawApp) => {
-  app.reset()
-  app.createShapes({
-    id: 'box1',
-    type: TDShapeType.Rectangle,
-    point: [200, 200],
-    size: [200, 200],
-  })
+  if (app === undefined) return
+  console.log('TESTS SHOULD HAPPEN HERE')
 }
 
 export default function BenchmarkPanning() {
   const rTldrawApp = React.useRef<TldrawApp>()
 
-  const fileSystemEvents = useFileSystem()
-
   const handleMount = React.useCallback((app: TldrawApp) => {
     window.app = app
     rTldrawApp.current = app
-
-    runBenchmark(app)
-
-    // app.reset()
-    // app.createShapes({
-    //   id: 'box1',
-    //   type: TDShapeType.Rectangle,
-    //   point: [200, 200],
-    //   size: [200, 200],
-    // })
   }, [])
+
+  const [file, setFile] = React.useState<TDFile>()
 
   const handlePersist = React.useCallback(() => {
     // noop
   }, [])
 
+  React.useEffect(() => {
+    async function loadFile(): Promise<void> {
+      const file = await fetch('benchmark-panning.tldr').then((response) => response.json())
+      setFile(file)
+      runBenchmark(window.app)
+    }
+
+    loadFile()
+  }, [])
+
   return (
     <div className="tldraw">
-      <Tldraw id="develop" {...fileSystemEvents} onMount={handleMount} onPersist={handlePersist} />
+      <Tldraw readOnly onMount={handleMount} onPersist={handlePersist} document={file?.document} />
     </div>
   )
 }
