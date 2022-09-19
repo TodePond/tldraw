@@ -5,7 +5,7 @@ import Vec from '@tldraw/vec'
 import * as React from 'react'
 
 // Change this constant to test different candidates!
-const CURRENT_CANDIDATE = 'FIXED_1'
+const CURRENT_CANDIDATE = 'MAGIC'
 
 //============//
 // CANDIDATES //
@@ -270,6 +270,38 @@ const CANDIDATE: any = {
 
     return result
   },
+  MAGIC: function getSvgPathFromStroke(points: number[][]): string {
+    const xs = points.map((point) => point[0])
+    const ys = points.map((point) => point[1])
+
+    const len = xs.length
+
+    // TODO: support smaller lengths - but just ignore for now while we measure
+    if (len < 3) {
+      return ''
+    }
+
+    const x0 = xs[0],
+      y0 = ys[0],
+      x1 = xs[1],
+      y1 = ys[1],
+      x2 = xs[2],
+      y2 = ys[2]
+    let result = `M${x0.toFixed(2)},${y0.toFixed(2)}
+      Q ${x1.toFixed(2)},${y1.toFixed(2)} ${average(x1, x2).toFixed(2)},${average(y1, y2).toFixed(
+      2
+    )}
+      T `
+
+    for (let i = 0, max = len - 1; i < max; i++) {
+      // TODO: bound check, start at > 0, etc.
+      result += `${average(xs[i], xs[i + 1]).toFixed(2)},${average(ys[i], ys[i + 1]).toFixed(2)} `
+    }
+
+    result += 'Z'
+
+    return result
+  },
 }
 
 //=========//
@@ -285,9 +317,7 @@ function lerp(a: number, b: number, t: number) {
   return a + (b - a) * t
 }
 
-function average(a: number, b: number) {
-  return (a + b) / 2
-}
+const average = (a: number, b: number) => (a + b) / 2
 
 export default function BenchmarkPanning() {
   //======//
@@ -362,7 +392,8 @@ export default function BenchmarkPanning() {
 
   return (
     <div className="tldraw">
-      <Tldraw readOnly onMount={handleMount} onPersist={handlePersist} document={file?.document} />
+      {/*<Tldraw onMount={handleMount} onPersist={handlePersist} document={file?.document} />*/}
+      <Tldraw onMount={handleMount} onPersist={handlePersist} />
     </div>
   )
 }
