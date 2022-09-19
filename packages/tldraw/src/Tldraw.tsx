@@ -20,6 +20,7 @@ import {
   useTldrawApp,
   useTranslation,
 } from '~hooks'
+import { useCursor } from '~hooks/useCursor'
 import { TDCallbacks, TldrawApp } from '~state'
 import { TLDR } from '~state/TLDR'
 import { shapeUtils } from '~state/shapes'
@@ -368,7 +369,6 @@ const InnerTldraw = React.memo(function InnerTldraw({
 }: InnerTldrawProps) {
   const app = useTldrawApp()
   const [dialogContainer, setDialogContainer] = React.useState<any>(null)
-
   const rWrapper = React.useRef<HTMLDivElement>(null)
 
   const state = app.useStore()
@@ -463,6 +463,8 @@ const InnerTldraw = React.memo(function InnerTldraw({
       elm.classList.remove(dark)
     }
   }, [settings.isDarkMode])
+
+  useCursor(rWrapper)
 
   return (
     <ContainerContext.Provider value={rWrapper}>

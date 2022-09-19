@@ -1,5 +1,54 @@
 ## 1.2.4
 
+## 1.23.5
+
+### Patch Changes
+
+- Fix mouse events.
+
+## 1.23.4
+
+### Patch Changes
+
+- Fix menu bug.
+
+## 1.23.3
+
+### Patch Changes
+
+- Small bump.
+
+## 1.23.2
+
+### Patch Changes
+
+- Fix bug with scrolling.
+
+## 1.23.1
+
+### Patch Changes
+
+- - Fix bug with mouse button state
+
+## 1.23.0
+
+### Minor Changes
+
+- - Remove `mobx` and `mobx-react-lite` as dependencies. This is a breaking change for libraries that expect data to be observable in `@tldraw/core`.
+
+## 1.22.0
+
+### Minor Changes
+
+- - Improve middle mouse panning
+  - Fix bug with assets in VS Code plugin
+  - Improve performance of draw-style shapes
+  - Fix bug with creating assets
+  - Fix bug with text align in labels when outputting images
+  - Fix bug with middle mouse panning on Linux
+  - Fix bug with zoom shortcuts on number pad
+  - Fix bug with draw and erase direction when holding shift
+
 ## 1.21.1
 
 ### Patch Changes

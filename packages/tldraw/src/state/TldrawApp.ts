@@ -8,6 +8,7 @@ import {
   TLPageState,
   TLPinchEventHandler,
   TLPointerEventHandler,
+  TLShape,
   TLShapeCloneHandler,
   TLWheelEventHandler,
   Utils,
@@ -1306,7 +1307,13 @@ export class TldrawApp extends StateManager<TDSnapshot> {
   updateDocument = (document: TDDocument, reason = 'updated_document'): this => {
     const prevState = this.state
 
-    const nextState = { ...prevState, document: { ...prevState.document } }
+    const nextState = {
+      ...prevState,
+      document: {
+        ...prevState.document,
+        assets: document.assets,
+      },
+    }
 
     if (!document.pages[this.currentPageId]) {
       nextState.appState = {
@@ -3987,7 +3994,7 @@ export class TldrawApp extends StateManager<TDSnapshot> {
     this.currentTool.onReleaseHandle?.(info, e)
   }
 
-  onShapeChange = (shape: { id: string } & Partial<TDShape>) => {
+  onShapeChange = (shape: { id: string } & Partial<TLShape>) => {
     const pageShapes = this.document.pages[this.currentPageId].shapes
     const shapeToUpdate = { ...(pageShapes[shape.id] as any), ...shape }
     const patch = Commands.updateShapes(this, [shapeToUpdate], this.currentPageId).after
