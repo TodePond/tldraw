@@ -5,7 +5,7 @@ import Vec from '@tldraw/vec'
 import * as React from 'react'
 
 // Change this constant to test different candidates!
-const CURRENT_CANDIDATE = 'REDUCE_POINT_READS'
+const CURRENT_CANDIDATE = 'FIXED_1'
 
 //============//
 // CANDIDATES //
@@ -195,6 +195,75 @@ const CANDIDATE: any = {
       ).toFixed(3)} `
       ax = bx
       ay = by
+    }
+
+    result += 'Z'
+
+    return result
+  },
+  FIXED_2: function getSvgPathFromStroke(points: number[][]): string {
+    const len = points.length
+
+    if (!len) {
+      return ''
+    }
+
+    const first = points[0]
+    let result = `M${first[0].toFixed(2)},${first[1].toFixed(2)}Q`
+
+    for (let i = 0, max = len - 1; i < max; i++) {
+      const a = points[i]
+      const b = points[i + 1]
+      result += `${a[0].toFixed(2)},${a[1].toFixed(2)} ${average(a[0], b[0]).toFixed(2)},${average(
+        a[1],
+        b[1]
+      ).toFixed(2)} `
+    }
+
+    result += 'Z'
+
+    return result
+  },
+  FIXED_4: function getSvgPathFromStroke(points: number[][]): string {
+    const len = points.length
+
+    if (!len) {
+      return ''
+    }
+
+    const first = points[0]
+    let result = `M${first[0].toFixed(2)},${first[1].toFixed(4)}Q`
+
+    for (let i = 0, max = len - 1; i < max; i++) {
+      const a = points[i]
+      const b = points[i + 1]
+      result += `${a[0].toFixed(4)},${a[1].toFixed(4)} ${average(a[0], b[0]).toFixed(4)},${average(
+        a[1],
+        b[1]
+      ).toFixed(4)} `
+    }
+
+    result += 'Z'
+
+    return result
+  },
+  FIXED_1: function getSvgPathFromStroke(points: number[][]): string {
+    const len = points.length
+
+    if (!len) {
+      return ''
+    }
+
+    const first = points[0]
+    let result = `M${first[0].toFixed(2)},${first[1].toFixed(1)}Q`
+
+    for (let i = 0, max = len - 1; i < max; i++) {
+      const a = points[i]
+      const b = points[i + 1]
+      result += `${a[0].toFixed(1)},${a[1].toFixed(1)} ${average(a[0], b[0]).toFixed(1)},${average(
+        a[1],
+        b[1]
+      ).toFixed(1)} `
     }
 
     result += 'Z'
