@@ -392,8 +392,8 @@ export default function BenchmarkPanning() {
 
   return (
     <div className="tldraw">
-      {/*<Tldraw onMount={handleMount} onPersist={handlePersist} document={file?.document} />*/}
-      <Tldraw onMount={handleMount} onPersist={handlePersist} />
+      <Tldraw onMount={handleMount} onPersist={handlePersist} document={file?.document} />
+      {/*<Tldraw onMount={handleMount} onPersist={handlePersist} />*/}
     </div>
   )
 }
