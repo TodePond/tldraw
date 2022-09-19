@@ -1,5 +1,72 @@
 # Changelog
 
+## 1.24.5
+
+### Patch Changes
+
+- Fix mouse events.
+- Updated dependencies
+  - @tldraw/core@1.18.4
+
+## 1.24.4
+
+### Patch Changes
+
+- Fix menu bug.
+
+## 1.24.3
+
+### Patch Changes
+
+- Small bump.
+- Updated dependencies
+  - @tldraw/core@1.18.3
+
+## 1.24.2
+
+### Patch Changes
+
+- Fix bug with scrolling.
+- Updated dependencies
+  - @tldraw/core@1.18.2
+
+## 1.24.1
+
+### Patch Changes
+
+- - Fix bug with mouse button state
+- Updated dependencies
+  - @tldraw/core@1.18.1
+
+## 1.24.0
+
+### Minor Changes
+
+- - Remove `mobx` and `mobx-react-lite` as dependencies. This is a breaking change for libraries that expect data to be observable in `@tldraw/core`.
+
+### Patch Changes
+
+- Updated dependencies
+  - @tldraw/core@1.18.0
+
+## 1.23.0
+
+### Minor Changes
+
+- - Improve middle mouse panning
+  - Fix bug with assets in VS Code plugin
+  - Improve performance of draw-style shapes
+  - Fix bug with creating assets
+  - Fix bug with text align in labels when outputting images
+  - Fix bug with middle mouse panning on Linux
+  - Fix bug with zoom shortcuts on number pad
+  - Fix bug with draw and erase direction when holding shift
+
+### Patch Changes
+
+- Updated dependencies
+  - @tldraw/core@1.17.0
+
 ## 1.22.1
 
 ### Patch Changes
