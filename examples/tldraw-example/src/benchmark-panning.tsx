@@ -271,34 +271,29 @@ const CANDIDATE: any = {
     return result
   },
   MAGIC: function getSvgPathFromStroke(points: number[][]): string {
-    const xs = points.map((point) => point[0])
-    const ys = points.map((point) => point[1])
+    const len = points.length
 
-    const len = xs.length
-
-    // TODO: support smaller lengths - but just ignore for now while we measure
-    if (len < 3) {
-      return ''
+    if (len < 4) {
+      return ``
     }
 
-    const x0 = xs[0],
-      y0 = ys[0],
-      x1 = xs[1],
-      y1 = ys[1],
-      x2 = xs[2],
-      y2 = ys[2]
-    let result = `M${x0.toFixed(2)},${y0.toFixed(2)}
-      Q ${x1.toFixed(2)},${y1.toFixed(2)} ${average(x1, x2).toFixed(2)},${average(y1, y2).toFixed(
+    let a = points[0]
+    let b = points[1]
+    const c = points[2]
+
+    let result = `M${a[0].toFixed(2)},${a[1].toFixed(2)} Q${b[0].toFixed(2)},${b[1].toFixed(
       2
-    )}
-      T `
+    )} ${average(b[0], c[0]).toFixed(2)},${average(b[1], c[1]).toFixed(2)} T`
 
-    for (let i = 0, max = len - 1; i < max; i++) {
-      // TODO: bound check, start at > 0, etc.
-      result += `${average(xs[i], xs[i + 1]).toFixed(2)},${average(ys[i], ys[i + 1]).toFixed(2)} `
+    for (let i = 2, max = len - 1; i < max; i++) {
+      a = points[i]
+      b = points[i + 1]
+      result += `${average(a[0], b[0]).toFixed(2)},${average(a[1], b[1]).toFixed(2)} `
     }
 
-    result += 'Z'
+    if (closed) {
+      result += 'Z'
+    }
 
     return result
   },
